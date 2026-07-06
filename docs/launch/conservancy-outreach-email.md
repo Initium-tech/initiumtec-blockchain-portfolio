@@ -13,8 +13,8 @@ The PRCTC is a 501(c)(3) run by zoo professionals. Best routes, in order:
 3. Alternates: Dustin Smith (VP, North Carolina Zoo) or via
    crestedtoadssp.org (the AZA recovery program site).
 
-Send from: rafaeligarciarivera@gmail.com (or an @initiumtec business address
-if/when one exists — more credible).
+Send from: rgarcia@conchoads.com (project business address
+— replies verified working via Microsoft 365).
 
 ---
 
@@ -54,5 +54,5 @@ Thank you for the work you do for this species.
 
 Kind regards,
 Rafael García
-Initiumtec — rafaeligarciarivera@gmail.com
+Initiumtec — rgarcia@conchoads.com
 Project repository: https://github.com/Initium-tech/initiumtec-blockchain-portfolio
