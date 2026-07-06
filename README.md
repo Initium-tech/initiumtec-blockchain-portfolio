@@ -1,3 +1,5 @@
+<img src="assets/concho.svg" alt="CONCHO — el gallo" width="130" align="right" />
+
 # Initium Token (INIT) — Build a Real ERC-20 Token, Step by Step
 
 A complete, working, beginner-friendly project: a **fixed-supply ERC-20 meme-style
