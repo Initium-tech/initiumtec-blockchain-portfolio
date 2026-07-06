@@ -19,7 +19,7 @@ to take our word for anything.
 
 ## Services
 
-### 1. Custom Token Development — *from $X,XXX*
+### 1. Custom Token Development — *from $2,500*
 A production-grade ERC-20 for your brand, community, or loyalty program.
 - Solidity contract on audited OpenZeppelin libraries — **no hidden admin
   powers**: fixed supply, no mint switch, no freeze, no transfer taxes
@@ -28,7 +28,7 @@ A production-grade ERC-20 for your brand, community, or loyalty program.
 - Source verification on the block explorer — your customers can audit it
 - Handover: keys, docs, and a walkthrough so *you* own everything
 
-### 2. Token-Gated Products — *from $X,XXX*
+### 2. Token-Gated Products — *from $4,000*
 Turn holdings into access: members-only content, beta programs, premium
 features, communities.
 - "Sign-In with Ethereum" authentication — passwordless, cryptographic,
@@ -36,13 +36,13 @@ features, communities.
 - On-chain balance checks against any token or NFT
 - Integrates with your existing site or app (Node/Express, any frontend)
 
-### 3. Wallet & dApp Frontends — *from $X,XXX*
+### 3. Wallet & dApp Frontends — *from $3,500*
 Non-custodial interfaces your users trust.
 - MetaMask / WalletConnect integration, live balances, transfers
 - Client-side validation, human-readable transaction prompts
 - Your branding, responsive, light/dark
 
-### 4. Launch & Liquidity Advisory — *hourly / retainer*
+### 4. Launch & Liquidity Advisory — *$125/hr · retainer $1,500/mo*
 For teams launching a token the right way.
 - Tokenomics design and transparent-launch checklist
 - DEX liquidity pool setup and LP locking (anti-rug-pull proof)
