@@ -68,4 +68,4 @@ For teams launching a token the right way.
 5. **Support** — 30 days included, retainer after
 
 ---
-*Contact: [rafael@initiumtec…] — or verify our contracts on-chain first. We prefer clients who check.*
+*Contact: rgarcia@conchoads.com — or verify our contracts on-chain first. We prefer clients who check.*
