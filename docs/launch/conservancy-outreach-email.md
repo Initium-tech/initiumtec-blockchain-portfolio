@@ -1,7 +1,20 @@
 # Outreach email — Puerto Rican Crested Toad Conservancy
 
-Send via the contact form / email at crestedtoad.org. Send BEFORE any public
-material mentions them. Personalize the bracketed parts.
+Send BEFORE any public material mentions them.
+
+## How to reach them (they publish no direct email — verified 2026-07-06)
+
+The PRCTC is a 501(c)(3) run by zoo professionals. Best routes, in order:
+1. **Message the organizer of their GoFundMe campaign** (linked from
+   crestedtoad.org homepage) — GoFundMe has a "contact organizer" feature.
+2. **Diane Barber, PRCTC President** — Conservation Program Coordinator at the
+   **Fort Worth Zoo**: write to the zoo's conservation department
+   (fortworthzoo.org → contact) with "Attn: Diane Barber / PRCT Conservancy".
+3. Alternates: Dustin Smith (VP, North Carolina Zoo) or via
+   crestedtoadssp.org (the AZA recovery program site).
+
+Send from: rafaeligarciarivera@gmail.com (or an @initiumtec business address
+if/when one exists — more credible).
 
 ---
 
@@ -41,4 +54,5 @@ Thank you for the work you do for this species.
 
 Kind regards,
 Rafael García
-Initiumtec — [website] · [email] · [phone]
+Initiumtec — rafaeligarciarivera@gmail.com
+Project repository: https://github.com/Initium-tech/initiumtec-blockchain-portfolio
