@@ -1,4 +1,4 @@
-<img src="assets/concho.svg" alt="CONCHO — el gallo" width="130" align="right" />
+<img src="assets/concho.svg" alt="CONCHO — el sapo concho" width="130" align="right" />
 
 # Initium Token (INIT) — Build a Real ERC-20 Token, Step by Step
 
