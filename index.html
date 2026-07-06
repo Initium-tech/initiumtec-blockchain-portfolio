@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CONCHO — the meme coin for Puerto Rico's only native toad</title>
+<meta name="description" content="CONCHO is a transparent community meme token supporting conservation of the endangered sapo concho, Puerto Rico's only native toad. Not an investment. Currently on testnet." />
+<link rel="icon" type="image/svg+xml" href="concho.svg" />
+<style>
+  :root {
+    --bg: #0d1f14; --bg2: #12291b; --ink: #eef5ee; --muted: #9db8a4;
+    --gold: #f5b93c; --gold-dark: #c97f10; --line: rgba(245,185,60,.25);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: -apple-system, "Segoe UI", Roboto, sans-serif; line-height: 1.6;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 0 1.25rem; }
+  header { text-align: center; padding: 4.5rem 0 3rem; }
+  header img { width: 180px; filter: drop-shadow(0 12px 30px rgba(0,0,0,.45)); }
+  h1 { font-size: clamp(2.4rem, 7vw, 4rem); margin: 1rem 0 .25rem; letter-spacing: .04em; }
+  h1 span { color: var(--gold); }
+  .tagline { color: var(--muted); font-size: 1.15rem; max-width: 34em; margin: 0 auto; }
+  .badge {
+    display: inline-block; margin-top: 1.25rem; padding: .4rem 1rem; border-radius: 999px;
+    border: 1px solid var(--line); color: var(--gold); font-size: .85rem; letter-spacing: .05em;
+  }
+  section { padding: 3rem 0; border-top: 1px solid var(--line); }
+  h2 { font-size: 1.6rem; margin-top: 0; }
+  h2 span { color: var(--gold); }
+  .muted { color: var(--muted); }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1rem; }
+  .card { background: var(--bg2); border: 1px solid var(--line); border-radius: 14px; padding: 1.25rem; }
+  .card h3 { margin: 0 0 .5rem; font-size: 1.05rem; color: var(--gold); }
+  .bar-row { display: grid; grid-template-columns: 10em 1fr 3.5em; gap: .75rem; align-items: center; margin: .6rem 0; font-size: .95rem; }
+  .bar { height: 14px; border-radius: 7px; background: rgba(255,255,255,.07); overflow: hidden; }
+  .bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--gold), var(--gold-dark)); }
+  .mono { font-family: ui-monospace, monospace; font-size: .85rem; word-break: break-all; }
+  a { color: var(--gold); }
+  .disclaimer {
+    background: var(--bg2); border: 1px solid var(--line); border-radius: 14px;
+    padding: 1.25rem; font-size: .95rem;
+  }
+  footer { padding: 3rem 0 4rem; text-align: center; color: var(--muted); font-size: .85rem; border-top: 1px solid var(--line); }
+  @media (prefers-color-scheme: light) { /* stays dark on purpose — it's the brand */ }
+</style>
+</head>
+<body>
+
+<header class="wrap">
+  <img src="concho.svg" alt="CONCHO coin — el sapo concho" />
+  <h1><span>CONCHO</span></h1>
+  <p class="tagline">The meme coin for <strong>el sapo concho</strong> — Puerto Rico's only
+  native toad, endangered and worth saving. Transparent, community-run, and honest
+  about what it is.</p>
+  <div class="badge">🧪 TESTNET PHASE — there is nothing to buy yet, on purpose</div>
+</header>
+
+<section class="wrap">
+  <h2>The <span>story</span></h2>
+  <p>Puerto Rico has exactly one native toad: the <strong>sapo concho</strong>
+  (<em>Peltophryne lemur</em>), a small toad with a bony crest and metallic-gold
+  eyes. It was believed extinct until 1966. Today it is endangered, surviving
+  through the work of conservationists who have reintroduced hundreds of
+  thousands of tadpoles to the island.</p>
+  <p>CONCHO exists to make that fight famous — a community token where the meme
+  is boricua pride and the mission is real: <strong>a fixed share of the
+  project's trading-fee revenue is donated to sapo concho conservation, with
+  every donation published on-chain</strong> so anyone can verify it happened.</p>
+</section>
+
+<section class="wrap">
+  <h2>The <span>pledge</span></h2>
+  <div class="cards">
+    <div class="card"><h3>50% of LP fees</h3>Half of all liquidity-provider fees earned by the team's position, donated quarterly.</div>
+    <div class="card"><h3>15% conservation fund</h3>A published wallet holding 15% of supply, sold only in pre-announced tranches — proceeds donated in full.</div>
+    <div class="card"><h3>On-chain proof</h3>Every donation posted with its transaction hash. If a donation is late, hold us to it publicly.</div>
+  </div>
+  <p class="muted" style="margin-top:1rem">Conservation partner: to be announced
+  once confirmed in writing. No organization's name is used without permission.</p>
+</section>
+
+<section class="wrap">
+  <h2><span>Tokenomics</span> — published before anyone can buy</h2>
+  <p>Fixed supply of <strong>100,000,000,000 CONCHO</strong>. The contract has no
+  mint function, no owner, no pause switch, no blacklist, and no transfer taxes —
+  these numbers cannot be changed by anyone, ever.</p>
+  <div class="bar-row"><span>Liquidity pool</span><div class="bar"><i style="width:50%"></i></div><b>50%</b></div>
+  <div class="bar-row"><span>Community</span><div class="bar"><i style="width:20%"></i></div><b>20%</b></div>
+  <div class="bar-row"><span>Conservation fund</span><div class="bar"><i style="width:15%"></i></div><b>15%</b></div>
+  <div class="bar-row"><span>Team (12-mo vest)</span><div class="bar"><i style="width:10%"></i></div><b>10%</b></div>
+  <div class="bar-row"><span>Operations</span><div class="bar"><i style="width:5%"></i></div><b>5%</b></div>
+  <p class="muted">Liquidity locked 12 months at launch (lock transaction published).
+  Team sales announced at least 72 hours in advance. Full details in the
+  <a href="https://github.com/Initium-tech/initiumtec-blockchain-portfolio/blob/main/docs/launch/TOKENOMICS.md">tokenomics disclosure</a>.</p>
+</section>
+
+<section class="wrap">
+  <h2>Radical <span>transparency</span></h2>
+  <p>Don't trust us — read the code. The current (testnet) contract is deployed
+  and source-verified on Sepolia:</p>
+  <p class="mono">CONCHO · <a href="https://sepolia.etherscan.io/address/0x01579f88f9D91bd4570aD56dA4D8b142A13C0DeC#code">0x01579f88f9D91bd4570aD56dA4D8b142A13C0DeC</a></p>
+  <p>Everything — contracts, tests, wallet, the token-gated Concho Club — is open
+  source: <a href="https://github.com/Initium-tech/initiumtec-blockchain-portfolio">github.com/Initium-tech/initiumtec-blockchain-portfolio</a></p>
+  <p class="muted">When mainnet launches, the one and only official contract
+  address will be announced here and on the official account — anywhere else,
+  assume it's fake.</p>
+</section>
+
+<section class="wrap">
+  <div class="disclaimer">
+    <strong>Read this before anything else.</strong> CONCHO is a meme token, not
+    an investment, a security, or a promise of profit. Its price can go to zero.
+    Nobody involved in this project will ever tell you it's going up. Buy it —
+    if and when it exists on mainnet — only because the toad is worth saving and
+    the meme makes you smile, and only with money you can afford to lose.
+    Nothing on this page is financial advice.
+  </div>
+</section>
+
+<footer class="wrap">
+  CONCHO 🐸 un proyecto boricua · built by <a href="https://github.com/Initium-tech">Initiumtec</a> ·
+  el sapo concho no se vende, se defiende
+</footer>
+
+</body>
+</html>
