@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>INIT Wallet</title>
+<!--
+  A minimal, SECURE wallet interface for the Initium Token.
+
+  Security model (important to understand):
+  - This page NEVER sees or stores a private key. Keys stay inside MetaMask.
+  - The page only *proposes* transactions; MetaMask shows the user exactly
+    what will happen and the user approves or rejects in the extension.
+  - That is the correct architecture for any web wallet UI. If a tutorial
+    ever asks you to paste a private key into a web page, close the tab.
+
+  Usage: serve this folder (don't open via file://, MetaMask won't inject).
+  Port 4747 — 3000 is taken by another local app (Sara AI):
+      npx serve wallet -l 4747
+  then open http://localhost:4747 in a browser with MetaMask.
+-->
+<script type="module">
+  import { ethers } from "https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.4/ethers.min.js";
+
+  // Paste your deployed token address here after running the deploy script.
+  // Your tokens on Sepolia testnet. Add more entries as you deploy them.
+  const TOKENS = {
+    "0x2EC1a7c1deC09763757cAca2caC91197f1A54122": "Initium Token (INIT)",
+    "0x01579f88f9D91bd4570aD56dA4D8b142A13C0DeC": "Concho (CONCHO)",
+  };
+  let TOKEN_ADDRESS = Object.keys(TOKENS)[0];
+
+  // Minimal ABI — only the functions/events this UI needs.
+  const ERC20_ABI = [
+    "function name() view returns (string)",
+    "function symbol() view returns (string)",
+    "function decimals() view returns (uint8)",
+    "function balanceOf(address) view returns (uint256)",
+    "function transfer(address to, uint256 amount) returns (bool)",
+    "event Transfer(address indexed from, address indexed to, uint256 value)",
+  ];
+
+  let provider, signer, token, decimals = 18, symbol = "INIT";
+
+  const $ = (id) => document.getElementById(id);
+  const show = (msg, isError = false) => {
+    const el = $("status");
+    el.textContent = msg;
+    el.className = isError ? "status error" : "status ok";
+  };
+
+  async function connect() {
+    if (!window.ethereum) {
+      show("MetaMask not detected. Install it from metamask.io", true);
+      return;
+    }
+    // Step 1: ask MetaMask for account access directly. Doing this ourselves
+    // (instead of letting ethers do it inside getSigner) gives us the REAL
+    // MetaMask error codes instead of a vague "could not coalesce error".
+    try {
+      await window.ethereum.request({ method: "eth_requestAccounts" });
+    } catch (err) {
+      console.error("eth_requestAccounts failed:", err);
+      if (err.code === 4001)
+        return show("You rejected the connection in MetaMask. Click Connect again to retry.", true);
+      if (err.code === -32002)
+        return show("A connection request is already waiting — click the MetaMask extension icon (puzzle piece → MetaMask) and approve it, then reload this page.", true);
+      return show(`MetaMask error ${err.code ?? ""}: ${err.message}`, true);
+    }
+
+    try {
+      provider = new ethers.BrowserProvider(window.ethereum);
+      signer = await provider.getSigner();
+      const addr = await signer.getAddress();
+      let net = await provider.getNetwork();
+
+      // Step 2: make sure we're on Sepolia; offer to switch if not.
+      if (net.chainId !== 11155111n) {
+        show("Switching MetaMask to Sepolia — confirm in the popup...");
+        try {
+          await window.ethereum.request({
+            method: "wallet_switchEthereumChain",
+            params: [{ chainId: "0xaa36a7" }], // 11155111
+          });
+          provider = new ethers.BrowserProvider(window.ethereum);
+          signer = await provider.getSigner();
+          net = await provider.getNetwork();
+        } catch (err) {
+          console.error("network switch failed:", err);
+          return show("Please switch MetaMask to the Sepolia network manually, then reload.", true);
+        }
+      }
+      $("account").textContent = addr;
+      $("network").textContent = `${net.name} (chainId ${net.chainId})`;
+      $("connected").hidden = false;
+      $("connectBtn").hidden = true;
+
+      await loadToken(TOKEN_ADDRESS);
+      show("Connected.");
+    } catch (err) {
+      console.error("connect failed:", err); // full details in DevTools console
+      show(`Connection failed: ${err.shortMessage || err.message}`, true);
+    }
+  }
+
+  async function loadToken(address) {
+    if (token) token.removeAllListeners(); // stop watching the previous token
+    TOKEN_ADDRESS = address;
+    token = new ethers.Contract(address, ERC20_ABI, signer);
+    const [name, sym, dec, addr] = await Promise.all([
+      token.name(), token.symbol(), token.decimals(), signer.getAddress(),
+    ]);
+    symbol = sym; decimals = Number(dec);
+    $("tokenName").textContent = `${name} (${sym})`;
+    await refreshBalance();
+
+    // Live-update the balance when a Transfer touches our address.
+    token.on(token.filters.Transfer(addr), refreshBalance);
+    token.on(token.filters.Transfer(null, addr), refreshBalance);
+  }
+
+  async function refreshBalance() {
+    const addr = await signer.getAddress();
+    const [tokenBal, ethBal] = await Promise.all([
+      token.balanceOf(addr),
+      provider.getBalance(addr),
+    ]);
+    $("balance").textContent = `${ethers.formatUnits(tokenBal, decimals)} ${symbol}`;
+    $("ethBalance").textContent = `${ethers.formatEther(ethBal)} ETH (for gas)`;
+  }
+
+  async function send() {
+    const to = $("to").value.trim();
+    const amountStr = $("amount").value.trim();
+
+    // Client-side validation BEFORE anything reaches the chain.
+    if (!ethers.isAddress(to)) return show("Invalid recipient address.", true);
+    let amount;
+    try {
+      amount = ethers.parseUnits(amountStr, decimals);
+      if (amount <= 0n) throw new Error();
+    } catch { return show("Invalid amount.", true); }
+
+    const myBal = await token.balanceOf(await signer.getAddress());
+    if (amount > myBal) return show("Amount exceeds your balance.", true);
+
+    try {
+      $("sendBtn").disabled = true;
+      show("Confirm the transaction in MetaMask...");
+      const tx = await token.transfer(to, amount);
+      show(`Sent. Waiting for confirmation... (${tx.hash.slice(0, 18)}…)`);
+      await tx.wait();
+      show(`Confirmed: ${amountStr} ${symbol} → ${to.slice(0, 10)}…`);
+      await refreshBalance();
+    } catch (err) {
+      show(`Transaction failed or rejected: ${err.shortMessage || err.message}`, true);
+    } finally {
+      $("sendBtn").disabled = false;
+    }
+  }
+
+  // Populate the token dropdown from the TOKENS map.
+  for (const [addr, label] of Object.entries(TOKENS)) {
+    const opt = document.createElement("option");
+    opt.value = addr; opt.textContent = label;
+    $("tokenSelect").appendChild(opt);
+  }
+  $("tokenSelect").addEventListener("change", async (e) => {
+    if (!signer) return;
+    try {
+      await loadToken(e.target.value);
+      show(`Switched to ${$("tokenName").textContent}.`);
+    } catch (err) {
+      console.error(err);
+      show(`Could not load token: ${err.shortMessage || err.message}`, true);
+    }
+  });
+
+  $("connectBtn").addEventListener("click", connect);
+  $("sendBtn").addEventListener("click", send);
+</script>
+<style>
+  :root { color-scheme: light dark; }
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+    max-width: 620px; margin: 3rem auto; padding: 0 1rem; line-height: 1.5;
+  }
+  h1 { font-size: 1.4rem; }
+  .card {
+    border: 1px solid color-mix(in srgb, currentColor 20%, transparent);
+    border-radius: 12px; padding: 1.25rem; margin: 1rem 0;
+  }
+  label { display: block; font-size: .85rem; margin-top: .75rem; opacity: .8; }
+  input, select {
+    width: 100%; box-sizing: border-box; padding: .55rem .7rem; margin-top: .25rem;
+    border: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+    border-radius: 8px; font: inherit; background: transparent; color: inherit;
+  }
+  select option { color: initial; }
+  button {
+    margin-top: 1rem; padding: .6rem 1.4rem; border: 0; border-radius: 8px;
+    background: #4f46e5; color: #fff; font: inherit; cursor: pointer;
+  }
+  button:disabled { opacity: .5; cursor: default; }
+  .mono { font-family: ui-monospace, monospace; font-size: .85rem; word-break: break-all; }
+  .balance { font-size: 1.6rem; font-weight: 600; }
+  .status { margin-top: 1rem; font-size: .9rem; min-height: 1.2em; }
+  .status.error { color: #dc2626; }
+  .status.ok { color: #16a34a; }
+</style>
+</head>
+<body>
+  <h1>🪙 Initium Token Wallet</h1>
+  <p>Keys never leave MetaMask — this page only proposes transactions.</p>
+
+  <button id="connectBtn">Connect MetaMask</button>
+
+  <div id="connected" hidden>
+    <div class="card">
+      <label>Account</label><div id="account" class="mono"></div>
+      <label>Network</label><div id="network"></div>
+      <label for="tokenSelect">Token</label>
+      <select id="tokenSelect"></select>
+      <div id="tokenName" style="opacity:.7; font-size:.85rem"></div>
+      <label>Balance</label><div id="balance" class="balance">—</div>
+      <div id="ethBalance" style="opacity:.7; font-size:.85rem"></div>
+    </div>
+
+    <div class="card">
+      <h2 style="font-size:1.05rem; margin-top:0">Send tokens</h2>
+      <label for="to">Recipient address</label>
+      <input id="to" placeholder="0x..." spellcheck="false" />
+      <label for="amount">Amount</label>
+      <input id="amount" placeholder="100" inputmode="decimal" />
+      <button id="sendBtn">Send</button>
+    </div>
+  </div>
+
+  <div id="status" class="status"></div>
+</body>
+</html>

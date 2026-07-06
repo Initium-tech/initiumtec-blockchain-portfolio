@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Concho Club</title>
+<script type="module">
+  import { ethers } from "https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.4/ethers.min.js";
+
+  const $ = (id) => document.getElementById(id);
+  const show = (msg, isError = false) => {
+    $("status").textContent = msg;
+    $("status").className = isError ? "status error" : "status ok";
+  };
+
+  async function enter() {
+    if (!window.ethereum) return show("MetaMask not detected.", true);
+    try {
+      await window.ethereum.request({ method: "eth_requestAccounts" });
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
+      const address = await signer.getAddress();
+
+      // 1. get a one-time login message from the server
+      show("Requesting login challenge...");
+      const { message, error: e1 } = await post("/api/nonce", { address });
+      if (e1) return show(e1, true);
+
+      // 2. sign it — free, no gas, just proof of key ownership
+      show("Sign the message in MetaMask (free — it is not a transaction)...");
+      const signature = await signer.signMessage(message);
+
+      // 3. server verifies signature + on-chain CONCHO balance
+      show("Verifying signature and CONCHO balance on-chain...");
+      const res = await post("/api/verify", { address, signature });
+      if (res.error) return show(res.error, true);
+
+      // 4. fetch the gated content with our session
+      const members = await fetch("/api/members", {
+        headers: { Authorization: `Bearer ${res.session}` },
+      }).then((r) => r.json());
+
+      $("welcome").textContent = members.welcome;
+      $("perks").innerHTML = members.perks.map((p) => `<li>${p}</li>`).join("");
+      $("holdings").textContent =
+        `Verified holding: ${Number(res.balance).toLocaleString("en-US")} CONCHO`;
+      $("club").hidden = false;
+      $("enterBtn").hidden = true;
+      show("Access granted ✔");
+    } catch (err) {
+      console.error(err);
+      show(err.shortMessage || err.message, true);
+    }
+  }
+
+  const post = (url, body) =>
+    fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    }).then((r) => r.json());
+
+  $("enterBtn").addEventListener("click", enter);
+</script>
+<style>
+  :root { color-scheme: light dark; }
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+    max-width: 620px; margin: 3rem auto; padding: 0 1rem; line-height: 1.55;
+  }
+  h1 { font-size: 1.5rem; }
+  .card {
+    border: 1px solid color-mix(in srgb, currentColor 20%, transparent);
+    border-radius: 12px; padding: 1.25rem; margin: 1rem 0;
+  }
+  button {
+    padding: .65rem 1.6rem; border: 0; border-radius: 8px;
+    background: #d97706; color: #fff; font: inherit; cursor: pointer; font-weight: 600;
+  }
+  .status { margin-top: 1rem; font-size: .9rem; min-height: 1.2em; }
+  .status.error { color: #dc2626; }
+  .status.ok { color: #16a34a; }
+  .muted { opacity: .7; font-size: .9rem; }
+</style>
+</head>
+<body>
+  <h1>🐔 Concho Club</h1>
+  <p>Members-only area, gated by the CONCHO token on Sepolia.</p>
+  <p class="muted">Entry requirement: hold at least <strong>1,000,000 CONCHO</strong>.
+  Your wallet signs a free message to prove ownership — no transaction, no gas,
+  and this site never sees your keys.</p>
+
+  <button id="enterBtn">Enter with MetaMask</button>
+  <div id="status" class="status"></div>
+
+  <div id="club" hidden class="card">
+    <h2 id="welcome" style="margin-top:0"></h2>
+    <div id="holdings" class="muted"></div>
+    <h3>Member perks</h3>
+    <ul id="perks"></ul>
+  </div>
+</body>
+</html>

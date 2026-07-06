@@ -1,0 +1,11 @@
+# Secrets — never commit
+.env
+
+# Dependencies & build artifacts
+node_modules/
+cache/
+artifacts/
+typechain-types/
+coverage/
+coverage.json
+.deployer-recovery.txt
